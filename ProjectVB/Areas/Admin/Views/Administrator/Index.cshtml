@@ -1,0 +1,300 @@
+﻿@using ProjectVB.Areas.Admin.Models;
+@model HomeIndexAH ;
+
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section customStyle{
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+
+    <link rel="stylesheet" href="~/AdminAssest/plugins/fontawesome-free/css/all.min.css">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="~/AdminAssest/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/AdminAssest/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/AdminAssest/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+    <link href="~/lib/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet" />
+
+    <link href="~/AdminAsest/plugins/sweetalert2/sweetalert2.css" rel="stylesheet" />
+}
+
+<div class="row">
+    <div class="col-12">
+        <a href="/Admin/Administrator/Add" class="btn btn-danger"> Yeni Yonetici Ekle(başka sayfa)</a>
+        <a href="/Admin/Administrator/Add" data-toggle="modal" data-target="#addAdmin" class="btn btn-danger"> Yeni Yönetici Ekle(Modal pencere)</a>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">DataTable with minimal features & hover style</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="tblAdministrator" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Foto</th>
+                                    <th>Ad Soyad</th>
+                                    <th>Email</th>
+                                    <th>Sifre</th>
+                                    <th>Admin Roller</th>
+                                    <th>IsActive</th>
+                                    <th>Duzenle</th>
+                                    <th>Sil</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.AdminList)
+                                {
+                                    <tr>
+                                        <td>
+                                            <img width="100" height="80" src="@item.PhotoPath" />
+                                        </td>
+                                        <td>@item.FullName</td>
+                                        <td>@item.Email</td>
+                                        <td> @item.Password</td>
+                                        <td>
+                                            @foreach (var role in item.AdminRoles)
+                                            {
+                                                <span>@role.Role.RoleName</span><br />
+                                            }
+                                        </td>
+                                        <td>@(item.IsActive?"Aktif":"Pasif")</td>
+                                        <td><a href="#" class="btn btn-warning"> Duzenle</a></td>
+                                        <td>
+                                            <input type="button" adminId="@item.Id" class="btn btn-danger btnDelete" value="SİL" />
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</section>
+
+
+<div class="modal" id="addAdmin" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Yeni Admin Ekleme Modali</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Ad Soyad</label>
+                            <input type="text" class="form-control" id="txtFullName" placeholder="Ad Soyad">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" class="form-control" id="txtEmail" placeholder="Email">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" class="form-control" id="txtPassword" placeholder="Sifre">
+                        </div>
+                        <div class="form-group">
+                            <label>File input</label>
+                            <div class="input-group">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="inputPhoto">
+                                    <label class="custom-file-label">Choose file</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Rolleri</label>
+                            <select multiple id="slcRole" class="form-control">
+                                @foreach (var item in Model.RoleList)
+                                {
+                                    <option value="@item.Id">@item.RoleName</option>
+                                }
+
+                            </select>
+                        </div>
+
+
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="chkIsActive">
+                            <label class="form-check-label">Aktif</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Vazgec</button>
+                <button id="btnSave" type="button" class="btn btn-primary">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section customScript{
+    <script src="~/AdminAssest/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="~/AdminAssest/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables  & Plugins -->
+    <script src="~/AdminAssest/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/AdminAssest/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/AdminAssest/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/AdminAssest/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <script src="~/AdminAssest/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="~/AdminAssest/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+    <script src="~/AdminAssest/plugins/jszip/jszip.min.js"></script>
+    <script src="~/AdminAssest/plugins/pdfmake/pdfmake.min.js"></script>
+    <script src="~/AdminAssest/plugins/pdfmake/vfs_fonts.js"></script>
+    <script src="~/AdminAssest/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+    <script src="~/AdminAssest/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+    <script src="~/AdminAssest/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+    <script src="~/AdminAsest/plugins/sweetalert2/sweetalert2.js"></script>
+    <script src="~/lib/sweetalert2/dist/sweetalert2.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="~/AdminAssest/dist/js/adminlte.min.js"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="~/AdminAssest/dist/js/demo.js"></script>
+    <!-- Page specific script -->
+    <script>
+        $(document).ready(function () {
+
+            $("#btnSave").click(function () {
+
+                var formData = new FormData()
+                var file = $("#inputPhoto")[0].files[0]
+                formData.append(file.name, file)
+                $.ajax({
+                    url: "/Admin/Administrator/UploadPhoto",
+                    method: "post",
+                    datatype: "json",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (uplodResult) {
+                        if (uplodResult.result) {
+                            var formModel = {
+                                FullName: $("#txtFullName").val(),
+                                Email: $("#txtEmail").val(),
+                                Password: $("#txtPassword").val(),
+                                RoleIds: $("#slcRole").val(),
+                                PhotoPath: uplodResult.photoPath,
+                                IsActive: $("#chkIsActive").is(":checked")
+                            }
+                            $.ajax({
+                                url: "/Admin/Administrator/Index",
+                                method: "post",
+                                datatype: "json",
+                                data: { vm: formModel },
+                                success: function (response) {
+
+                                    if (response.result) {
+
+                                        Swal.fire({
+                                            title: 'Do you want to save the changes?',
+                                            showDenyButton: true,
+                                            showCancelButton: true,
+                                            confirmButtonText: 'Save',
+                                            denyButtonText: `Don't save`,
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                Swal.fire('Saved!')
+                                                window.location.reload()
+                                            } else if (result.isDenied) {
+                                                Swal.fire('Changes are not saved', '', 'info')
+                                            }
+                                        })
+
+                                    }
+                                    else {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Ops...',
+                                            text: response.messsage,
+                                            footer: '<a href="">Why do I have this issue?</a>'
+                                        })
+                                    }
+
+                                }
+                            })
+                        }
+                        else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: uplodResult.messsage,
+                                text: 'Something went wrong!'
+                            })
+                        }
+                    }
+
+                })
+            })
+
+            $(document).on("click", ".btnDelete", function () {
+
+                Swal.fire({
+                    title: 'Silmek istediginden Emin Misin?',
+                    
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'sil'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        var adminId = $(this).attr("adminId")
+                        var trDelete = $(this).closest("tr")
+
+                        $.ajax({
+                            url: "/Admin/Administrator/DeleteAdmin",
+                            method: "post",
+                            datatype: "json",
+                            data: { adId: adminId },
+                            success: function (response) {
+                                if (response.result) {
+                                    Swal.fire({
+                                        text: response.message,
+                                        icon: 'success',
+                                        showCancelButton: false,
+                                        confirmButtonColor: '#3085d6',
+                                        confirmButtonText: 'Tamam'
+                                    }).then((result) => {
+                                        trDelete.fadeTo("slow", 0.33, function myfunction() {
+                                            $(this).remove()
+                                        })
+                                    })
+
+                                }
+                            }
+                        })
+                    }
+                })
+
+            })
+
+        });
+    </script>
+}
+
+

@@ -1,0 +1,170 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title> Admin Giris Sayfasi</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/AdminAsest/plugins/fontawesome-free/css/all.min.css">
+    <!-- icheck bootstrap -->
+    <link rel="stylesheet" href="~/AdminAsest/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/AdminAsest/dist/css/adminlte.min.css">
+</head>
+<body class="hold-transition login-page">
+    <div class="login-box">
+        <div class="login-logo">
+            <a href="../../index2.html"><b>Admin</b>Giris</a>
+        </div>
+        <!-- /.login-logo -->
+        <div class="card">
+            <div class="card-body login-card-body">
+                <form>
+                    <div class="input-group mb-3">
+                        <input id="txtEmail" type="email" class="form-control" placeholder="Email">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-envelope"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="password" id="txtPassword" class="form-control" placeholder="Password">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-8">
+                            <div class="icheck-primary">
+                                <input type="checkbox" id="remember">
+                                <label for="remember">
+                                    Beni Hatirla
+                                </label>
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-4">
+                            <button type="button" id="btnKaydet" class="btn btn-primary btn-block">Giriş Yap</button>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                </form>
+
+                <p class="mb-1">
+                    <a data-toggle="modal" data-target="#forgatPass" href="#">Sifremi unuttum</a>
+                </p>
+            </div>
+
+            <div class="card-footer">
+
+            </div>
+
+
+
+            <div class="modal" id="forgatPass" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Sifremi Unuttum</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card card-primary">
+                                        <div class="card-header">
+                                            <h3 class="card-title"> Sifremi Unuttum</h3>
+                                            <form>
+                                                <div class="card-body">
+                                                    <div class="form-group">
+                                                        <label> Email</label>
+                                                        <input type="text" class="form-control" id="fgEmail" placeholder="Email Adresini Gİr" />
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                            <button id="sendPass" type="button" class="btn btn-primary">Sifre Gonder</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+        </div>
+    </div>
+    <!-- /.login-box -->
+    <!-- jQuery -->
+    <script src="~/AdminAsest/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="~/AdminAsest/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="~/AdminAsest/dist/js/adminlte.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#btnKaydet").click(function () {
+                var formModel = {
+                    Email: $("#txtEmail").val(),
+                    Password: $("#txtPassword").val()
+                }
+                $.ajax({
+                    url: "/Admin/Authentication/LogIn",
+                    method: "post",
+                    dataType: "json",
+                    data: formModel,
+                    success: function (response) {
+                        if (!response.result) {
+                            var content = "<div class='alert alert-" + response.alertStyle + "'>" + response.message + "</div>"
+
+                            $(".card-footer").html("")
+
+                            $(".card-footer").html(content);
+                        }
+                        else
+                            window.location.href = "/Admin/Home/Index"
+                    }
+                });
+            });
+
+
+            $("#sendPass").click(function () {
+                var model = { Email: $("#fgEmail").val() };
+                $.ajax({
+                    url: "/Admin/Authentication/SendPassword",
+                    method: "post",
+                    dataType: "json",
+                    data: { vm: model },
+                    success: function (response) {
+                        alert(response.message)
+                    }
+
+
+                })
+            })
+
+        });
+
+
+    </script>
+</body>
+</html>
+
